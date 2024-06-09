@@ -1,15 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:newlivestock/models/cow.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:newlivestock/pages/homepage.dart';
 import 'package:newlivestock/pages/individual_cow_details.dart';
-import 'package:newlivestock/providers/cow_provider.dart';
 
-class AllCowsDetails extends ConsumerWidget {
+class AllCowsDetails extends StatefulWidget {
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final cows = ref.watch(cowsProvider);
+  _AllCowsDetailsState createState() => _AllCowsDetailsState();
+}
 
+class _AllCowsDetailsState extends State<AllCowsDetails> {
+  final List<Cow> _cows = [];
+
+  final _statusController = TextEditingController();
+  final _status2Controller = TextEditingController();
+  final _idController = TextEditingController();
+  final _breedController = TextEditingController();
+  final _ageController = TextEditingController();
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color.fromRGBO(193, 215, 172, 1),
       appBar: AppBar(
@@ -100,121 +109,143 @@ class AllCowsDetails extends ConsumerWidget {
           SliverList(
             delegate: SliverChildBuilderDelegate(
               (context, index) {
-                final cow = cows[index];
+                final cow = _cows[index];
 
-                return GestureDetector(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => IndividualCowDetail(
-                                cowId: cow.id,
-                              )),
-                    );
+                return Dismissible(
+                  key: Key(cow.id),
+                  onDismissed: (direction) {
+                    setState(() {
+                      _cows.removeAt(index);
+                    });
                   },
-                  child: ListTile(
-                    tileColor: index % 2 == 0
-                        ? const Color.fromRGBO(235, 235, 235, 1)
-                        : const Color.fromARGB(255, 255, 255, 255),
-                    title: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Container(
-                              width: MediaQuery.of(context).size.width / 20,
-                              height: MediaQuery.of(context).size.height / 30,
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: getStatusColor(cow.status),
-                              ),
-                              child: Center(
-                                child: Text(
-                                  cow.status,
-                                  style: const TextStyle(
-                                    fontFamily: "Poppins",
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w400,
-                                    color: Colors.white,
+                  child: GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => IndividualCowDetail(
+                                  cowId: cow.id,
+                                )),
+                      );
+                    },
+                    child: ListTile(
+                      tileColor: index % 2 == 0
+                          ? const Color.fromRGBO(235, 235, 235, 1)
+                          : const Color.fromARGB(255, 255, 255, 255),
+                      title: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Container(
+                                width: MediaQuery.of(context).size.width / 20,
+                                height: MediaQuery.of(context).size.height / 30,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: getStatusColor(cow.status),
+                                ),
+                                child: Center(
+                                  child: Text(
+                                    cow.status,
+                                    style: const TextStyle(
+                                      fontFamily: "Poppins",
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w400,
+                                      color: Colors.white,
+                                    ),
                                   ),
                                 ),
                               ),
-                            ),
-                            const SizedBox(width: 5),
-                            Container(
-                              width: MediaQuery.of(context).size.width / 20,
-                              height: MediaQuery.of(context).size.height / 30,
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: getStatusColor(cow.status2),
-                              ),
-                              child: Center(
-                                child: Text(
-                                  cow.status2,
-                                  style: const TextStyle(
-                                    fontFamily: "Poppins",
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w400,
-                                    color: Colors.white,
+                              const SizedBox(width: 5),
+                              Container(
+                                width: MediaQuery.of(context).size.width / 20,
+                                height: MediaQuery.of(context).size.height / 30,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: getStatusColor(cow.status2),
+                                ),
+                                child: Center(
+                                  child: Text(
+                                    cow.status2,
+                                    style: const TextStyle(
+                                      fontFamily: "Poppins",
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w400,
+                                      color: Colors.white,
+                                    ),
                                   ),
                                 ),
                               ),
-                            ),
-                            const SizedBox(width: 5),
-                          ],
-                        ),
-                        Container(
-                          width: MediaQuery.of(context).size.width / 7,
-                          height: MediaQuery.of(context).size.height / 28,
-                          child: Center(
-                            child: Text(
-                              cow.id,
-                              style: const TextStyle(
-                                fontFamily: 'Poppins',
-                                fontSize: 15,
-                                fontWeight: FontWeight.w500,
-                                color: Color.fromRGBO(77, 119, 34, 1),
+                              const SizedBox(width: 5),
+                            ],
+                          ),
+                          Container(
+                            width: MediaQuery.of(context).size.width / 7,
+                            height: MediaQuery.of(context).size.height / 28,
+                            child: Center(
+                              child: Text(
+                                cow.id,
+                                style: const TextStyle(
+                                  fontFamily: 'Poppins',
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w500,
+                                  color: Color.fromRGBO(77, 119, 34, 1),
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                        Container(
-                          width: MediaQuery.of(context).size.width / 7,
-                          height: MediaQuery.of(context).size.height / 28,
-                          child: Center(
-                            child: Text(
-                              cow.breed,
-                              style: const TextStyle(
-                                fontFamily: 'Poppins',
-                                fontSize: 15,
-                                fontWeight: FontWeight.w500,
-                                color: Color.fromRGBO(77, 119, 34, 1),
+                          Container(
+                            width: MediaQuery.of(context).size.width / 7,
+                            height: MediaQuery.of(context).size.height / 28,
+                            child: Center(
+                              child: Text(
+                                cow.breed,
+                                style: const TextStyle(
+                                  fontFamily: 'Poppins',
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w500,
+                                  color: Color.fromRGBO(77, 119, 34, 1),
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                        Container(
-                          width: MediaQuery.of(context).size.width / 15,
-                          height: MediaQuery.of(context).size.height / 28,
-                          child: Center(
-                            child: Text(
-                              cow.age,
-                              style: const TextStyle(
-                                fontFamily: 'Poppins',
-                                fontSize: 15,
-                                fontWeight: FontWeight.w500,
-                                color: Color.fromRGBO(77, 119, 34, 1),
+                          Container(
+                            width: MediaQuery.of(context).size.width / 15,
+                            height: MediaQuery.of(context).size.height / 28,
+                            child: Center(
+                              child: Text(
+                                cow.age,
+                                style: const TextStyle(
+                                  fontFamily: 'Poppins',
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w500,
+                                  color: Color.fromRGBO(77, 119, 34, 1),
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                      ],
+                          IconButton(
+                            icon: Icon(Icons.edit),
+                            onPressed: () {
+                              _openEditCowForm(context, index, cow);
+                            },
+                          ),
+                          IconButton(
+                            icon: Icon(Icons.delete),
+                            onPressed: () {
+                              setState(() {
+                                _cows.removeAt(index);
+                              });
+                            },
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 );
               },
-              childCount: cows.length,
+              childCount: _cows.length,
             ),
           ),
         ],
@@ -223,7 +254,7 @@ class AllCowsDetails extends ConsumerWidget {
       floatingActionButton: FloatingActionButton(
         backgroundColor: const Color.fromRGBO(77, 119, 34, 1),
         onPressed: () {
-          _openAddCowForm(context, ref);
+          _openAddCowForm(context);
         },
         child: const Icon(
           Icons.add,
@@ -249,12 +280,44 @@ class AllCowsDetails extends ConsumerWidget {
     }
   }
 
-  void _openAddCowForm(BuildContext context, WidgetRef ref) {
-    showDialog<Map<String, String>>(
+  void _openAddCowForm(BuildContext context) {
+    _statusController.clear();
+    _status2Controller.clear();
+    _idController.clear();
+    _breedController.clear();
+    _ageController.clear();
+
+    showDialog(
       context: context,
       builder: (context) => AlertDialog(
         title: Text('Add Cow'),
-        content: _AddCowForm(),
+        content: Form(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextFormField(
+                controller: _statusController,
+                decoration: InputDecoration(labelText: 'Status'),
+              ),
+              TextFormField(
+                controller: _status2Controller,
+                decoration: InputDecoration(labelText: 'Status 2'),
+              ),
+              TextFormField(
+                controller: _idController,
+                decoration: InputDecoration(labelText: 'ID'),
+              ),
+              TextFormField(
+                controller: _breedController,
+                decoration: InputDecoration(labelText: 'Breed'),
+              ),
+              TextFormField(
+                controller: _ageController,
+                decoration: InputDecoration(labelText: 'Age'),
+              ),
+            ],
+          ),
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
@@ -262,35 +325,95 @@ class AllCowsDetails extends ConsumerWidget {
           ),
           ElevatedButton(
             onPressed: () {
-              final _statusController = _AddCowForm._statusController.text;
-              final _status2Controller = _AddCowForm._status2Controller.text;
-              final _idController = _AddCowForm._idController.text;
-              final _breedController = _AddCowForm._breedController.text;
-              final _ageController = _AddCowForm._ageController.text;
+              final newCow = Cow(
+                status: _statusController.text,
+                status2: _status2Controller.text,
+                id: _idController.text,
+                breed: _breedController.text,
+                age: _ageController.text,
+                gender: "",
+                weight: "",
+                puberty: "false",
+                dateOfCulling: "null",
+                birthDate: "null",
+                remarks: "null",
+                dewormingDate: null,
+              );
+              setState(() {
+                _cows.add(newCow);
+              });
+              Navigator.pop(context);
+            },
+            child: Text('Save'),
+          ),
+        ],
+      ),
+    );
+  }
 
-              if (_statusController.isNotEmpty &&
-                  _status2Controller.isNotEmpty &&
-                  _idController.isNotEmpty &&
-                  _breedController.isNotEmpty &&
-                  _ageController.isNotEmpty) {
-                final newCow = Cow(
-                  status: _statusController,
-                  status2: _status2Controller,
-                  id: _idController,
-                  breed: _breedController,
-                  age: _ageController,
-                  gender: "", // Provide a default value for unused arguments
-                  weight: "", // Provide a default value
-                  puberty:
-                      "false", // Provide a default value (can be bool or DateTime)
-                  dateOfCulling: "null", // Provide a default value
-                  birthDate: "null", // Provide a default value
-                  remarks: "null",
-                  dewormingDate: null, // Provide a default value
-                );
-                ref.read(cowsProvider.notifier).addCow(newCow);
-                Navigator.pop(context);
-              }
+  void _openEditCowForm(BuildContext context, int index, Cow cow) {
+    _statusController.text = cow.status;
+    _status2Controller.text = cow.status2;
+    _idController.text = cow.id;
+    _breedController.text = cow.breed;
+    _ageController.text = cow.age;
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Edit Cow'),
+        content: Form(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextFormField(
+                controller: _statusController,
+                decoration: InputDecoration(labelText: 'Status'),
+              ),
+              TextFormField(
+                controller: _status2Controller,
+                decoration: InputDecoration(labelText: 'Status 2'),
+              ),
+              TextFormField(
+                controller: _idController,
+                decoration: InputDecoration(labelText: 'ID'),
+              ),
+              TextFormField(
+                controller: _breedController,
+                decoration: InputDecoration(labelText: 'Breed'),
+              ),
+              TextFormField(
+                controller: _ageController,
+                decoration: InputDecoration(labelText: 'Age'),
+              ),
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text('Cancel'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              final editedCow = Cow(
+                status: _statusController.text,
+                status2: _status2Controller.text,
+                id: _idController.text,
+                breed: _breedController.text,
+                age: _ageController.text,
+                gender: cow.gender,
+                weight: cow.weight,
+                puberty: cow.puberty,
+                dateOfCulling: cow.dateOfCulling,
+                birthDate: cow.birthDate,
+                remarks: cow.remarks,
+                dewormingDate: cow.dewormingDate,
+              );
+              setState(() {
+                _cows[index] = editedCow;
+              });
+              Navigator.pop(context);
             },
             child: Text('Save'),
           ),
@@ -299,50 +422,3 @@ class AllCowsDetails extends ConsumerWidget {
     );
   }
 }
-
-class _AddCowForm extends ConsumerWidget {
-  static final _statusController = TextEditingController();
-  static final _status2Controller = TextEditingController();
-  static final _idController = TextEditingController();
-  static final _breedController = TextEditingController();
-  static final _ageController = TextEditingController();
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    return Form(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          TextFormField(
-            controller: _statusController,
-            decoration: InputDecoration(labelText: 'Status'),
-          ),
-          TextFormField(
-            controller: _status2Controller,
-            decoration: InputDecoration(labelText: 'Status 2'),
-          ),
-          TextFormField(
-            controller: _idController,
-            decoration: InputDecoration(labelText: 'ID'),
-          ),
-          TextFormField(
-            controller: _breedController,
-            decoration: InputDecoration(labelText: 'Breed'),
-          ),
-          TextFormField(
-            controller: _ageController,
-            decoration: InputDecoration(labelText: 'Age'),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-final addCowFormProvider = StateProvider.autoDispose((ref) => {
-      'status': '',
-      'status2': '',
-      'id': '',
-      'breed': '',
-      'age': '',
-    });
